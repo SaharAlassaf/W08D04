@@ -6,8 +6,6 @@ const authorization = async (req, res, next) => {
 
     const result = await rolerModel.findById(roleId);
 
-    console.log(result.role);
-
     if (result.role === "admin") {
       next();
     } else {

@@ -47,7 +47,7 @@ const signin = (req, res) => {
             const payload = {
               id: result._id,
               role: result.role,
-              isDel: result.result,
+              isDel: result.isDel,
             };
             const options = { expiresIn: "1h" };
             const secret = process.env.secretKey;

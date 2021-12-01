@@ -1,8 +1,7 @@
 const postModel = require("./../../db/models/post");
 
-const post = (req, res) => {
-  if (!req.token.isDel) {
-    const { img, desc, user } = req.body;
+const createPost = (req, res) => {
+    const { img, desc } = req.body;
 
     const newPost = new postModel({
       img,
@@ -18,9 +17,8 @@ const post = (req, res) => {
       .catch((err) => {
         res.status(400).send(err);
       });
-  }
 };
 
 module.exports = {
-    post,
-  };
+  createPost,
+};
