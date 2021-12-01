@@ -16,7 +16,6 @@ const addComment = (req, res) => {
         const newCom = new comModel({
           comment,
           user: req.token.id,
-          // dosen't saved!
           post: postId,
         });
         newCom
@@ -39,7 +38,7 @@ const addComment = (req, res) => {
 
 //Show all comments for Admin
 const comments = (req, res) => {
-  postModel
+  comModel
     .find({ isDel: false })
     .then((result) => {
       if (result.length > 0) {
@@ -53,14 +52,32 @@ const comments = (req, res) => {
     });
 };
 
+// show post by id
+const getCom = (req, res) => {
+  const { id } = req.params;
+  comModel
+    .findById(id)
+    .exec()
+    .then((result) => {
+      if (result) {
+        res.status(201).send(result);
+      } else {
+        res.status(404).send("Comment is not exist");
+      }
+    })
+    .catch((err) => {
+      res.status(400).send(err);
+    });
+};
+
 //Update comment
 const editComment = (req, res) => {
-  const { comId } = req.params; //postId
+  const { postId, comId } = req.params;
   const { comment } = req.body;
 
   comModel
     .findOneAndUpdate(
-      { _id: comId, user: req.token.id /* ,post: postId*/ },
+      { _id: comId, user: req.token.id, post: postId },
       { comment },
       { new: true }
     )
@@ -80,12 +97,13 @@ const editComment = (req, res) => {
     });
 };
 
+// Delete comment
 const deleteComment = (req, res) => {
-  const { comId } = req.params;
+  const { postId, comId } = req.params;
 
   comModel
     .findOneAndUpdate(
-      { _id: comId, user: req.token.id, isDel: false },
+      { _id: comId, user: req.token.id, post: postId, isDel: false },
       { isDel: true },
       { new: true }
     )
@@ -107,6 +125,7 @@ const deleteComment = (req, res) => {
 module.exports = {
   addComment,
   comments,
+  getCom,
   editComment,
   deleteComment,
 };
