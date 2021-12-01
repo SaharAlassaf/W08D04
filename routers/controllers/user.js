@@ -4,14 +4,17 @@ var jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const signup = async (req, res) => {
-  const { email, password, role } = req.body;
+  const { email, username, password, avatar, role } = req.body;
 
   const savedEmail = email.toLowerCase();
+  const savedUsername = username.toLowerCase();
   const hashedPassword = await bcrypt.hash(password, Number(process.env.SALT));
 
   const newUser = new userModel({
     email: savedEmail,
+    username: savedUsername,
     password: hashedPassword,
+    avatar,
     role,
   });
 
@@ -26,21 +29,26 @@ const signup = async (req, res) => {
 };
 
 const signin = (req, res) => {
-  const { email, password } = req.body;
+  const { emailORusername, password } = req.body;
 
-  const savedEmail = email.toLowerCase();
+  const savedEmailORusername = emailORusername.toLowerCase();
 
   userModel
-    .findOne({ email: savedEmail })
+    .findOne({ $or: [{ email: savedEmailORusername }, { username: savedEmailORusername }] })
     .then(async (result) => {
       if (result) {
-        if (result.email == savedEmail) {
+        console.log(result.username);
+        if (result.email == savedEmailORusername || result.username == savedEmailORusername) {
           const checkedPassword = await bcrypt.compare(
             password,
             result.password
           );
           if (checkedPassword) {
-            const payload = { id: result._id, role: result.role, isDel: result.result };
+            const payload = {
+              id: result._id,
+              role: result.role,
+              isDel: result.result,
+            };
             const options = { expiresIn: "1h" };
             const secret = process.env.secretKey;
             const token = await jwt.sign(payload, secret, options);
@@ -62,7 +70,7 @@ const signin = (req, res) => {
 
 const users = (req, res) => {
   userModel
-    .find({isDel: { $eq: false }})
+    .find({ isDel: { $eq: false } })
     .then((result) => {
       res.status(201).send(result);
     })
