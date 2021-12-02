@@ -124,6 +124,26 @@ const deletePost = (req, res) => {
     });
 };
 
+// admin delete post
+const adminDeletePost = (req, res) => {
+  const { id } = req.params;
+
+  postModel
+    .findOneAndUpdate({ _id: id, isDel: false }, { isDel: true }, { new: true })
+    .exec()
+    .then((result) => {
+      if (result) {
+        res.status(201).send("Deleted successfully✅");
+        // res.status(201).send(result);
+      } else {
+        res.status(404).send("Failed deleted⚠️");
+      }
+    })
+    .catch((err) => {
+      res.status(400).send(err);
+    });
+};
+
 // like post
 const like = (req, res) => {
   const { postId } = req.params;
@@ -173,5 +193,6 @@ module.exports = {
   userPost,
   updatePost,
   deletePost,
+  adminDeletePost,
   like,
 };

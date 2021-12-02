@@ -36,7 +36,7 @@ const addComment = (req, res) => {
     });
 };
 
-//Show all comments for Admin
+//Show all comments
 const comments = (req, res) => {
   comModel
     .find({ isDel: false })
@@ -122,10 +122,36 @@ const deleteComment = (req, res) => {
     });
 };
 
+// admin delete comment
+const adminDeleteComment = (req, res) => {
+  const { postId, comId } = req.params;
+
+  comModel
+    .findOneAndUpdate(
+      { _id: comId, post: postId, isDel: false },
+      { isDel: true },
+      { new: true }
+    )
+    .exec()
+    .then((result) => {
+      if (result) {
+        res.status(201).send("Deleted successfully✅");
+        // res.status(201).send(result);
+      } else {
+        // if not the creator or allready deleted
+        res.status(404).send("Failed deleted⚠️");
+      }
+    })
+    .catch((err) => {
+      res.status(400).send(err);
+    });
+};
+
 module.exports = {
   addComment,
   comments,
   getCom,
   editComment,
   deleteComment,
+  adminDeleteComment
 };

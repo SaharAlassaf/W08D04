@@ -6,6 +6,7 @@ const {
   getPost,
   updatePost,
   deletePost,
+  adminDeletePost,
   like,
 } = require("../controllers/post");
 const authentication = require("./../middlewares/authentication");
@@ -18,9 +19,11 @@ postRouter.post("/createPost", authentication, exist, createPost);
 postRouter.get("/", authentication, exist, posts);
 postRouter.get("/userPost", authentication, exist, userPost);
 
+
 postRouter.get("/getPost/:id", authentication, exist, getPost);
 postRouter.put("/updatePost/:id", authentication, exist, updatePost);
 postRouter.delete("/deletePost/:id", authentication, exist, deletePost);
+postRouter.delete("/adminDeletePost/:id", authentication, authorization, adminDeletePost);
 postRouter.post("/like/:postId", authentication, like);
 
 module.exports = postRouter;

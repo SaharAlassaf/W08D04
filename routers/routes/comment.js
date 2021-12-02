@@ -5,6 +5,7 @@ const {
   getCom,
   editComment,
   deleteComment,
+  adminDeleteComment
 } = require("../controllers/comment");
 const authentication = require("./../middlewares/authentication");
 const authorization = require("./../middlewares/authorization");
@@ -12,8 +13,8 @@ const exist = require("./../middlewares/exist");
 
 const commentRouter = express.Router();
 
-commentRouter.get("/comments", authentication, authorization, comments); //just Admin
-commentRouter.get("/getCom/:id", authentication, authorization, getCom); //just Admin
+commentRouter.get("/comments", authentication, exist, comments);
+commentRouter.get("/getCom/:id", authentication, exist, getCom);
 commentRouter.post("/addComment/:postId", authentication, exist, addComment);
 commentRouter.put(
   "/editComment/:postId/:comId",
@@ -27,5 +28,11 @@ commentRouter.delete(
   exist,
   deleteComment
 );
+commentRouter.delete(
+  "/adminDeleteComment/:postId/:comId",
+  authentication,
+  authorization,
+  adminDeleteComment
+);  //just Admin
 
 module.exports = commentRouter;
