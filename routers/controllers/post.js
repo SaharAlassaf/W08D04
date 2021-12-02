@@ -135,8 +135,10 @@ const like = (req, res) => {
         likeModel
           .findOneAndUpdate(
             { post: postId, user: req.token.id },
-            { $set: { isLiked: !result.isLiked } }
-          )
+            { isLiked: !ruselt.isLiked  }
+          ).then((updateResult) => {
+            res.status(201).send(updateResult);
+          })
           .catch((err) => {
             res.status(400).send(err);
           });
@@ -148,8 +150,8 @@ const like = (req, res) => {
 
         likePost
           .save()
-          .then(() => {
-            res.status(201).send(result);
+          .then((newResult) => {
+            res.status(201).send(newResult);
             // res.status(201).send("liked successfully✅");
           })
           .catch((err) => {

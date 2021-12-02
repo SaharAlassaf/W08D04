@@ -102,13 +102,13 @@ const deleteUser = (req, res) => {
           .updateMany({ user: id }, { $set: { isDel: true } })
           .then(() => {})
           .catch((err) => {
-            console.log(err);
+            res.status(400).send(err);
           });
         comModel
           .updateMany({ user: id }, { $set: { isDel: true } })
           .then(() => {})
           .catch((err) => {
-            console.log(err);
+            res.status(400).send(err);
           });
         likeModel
           .updateMany({ user: id }, { $set: { isLiked: true } })
@@ -116,7 +116,7 @@ const deleteUser = (req, res) => {
             res.status(201).send("Deleted successfully✅");
           })
           .catch((err) => {
-            console.log(err);
+            res.status(400).send(err);
           });
       } else {
         res.status(404).send("Already deleted");
