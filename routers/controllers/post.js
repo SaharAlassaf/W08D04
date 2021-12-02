@@ -21,7 +21,7 @@ const createPost = (req, res) => {
     });
 };
 
-//Show all posts for Admin
+//Show all posts
 const posts = (req, res) => {
   postModel
     .find({ isDel: false })
@@ -64,7 +64,7 @@ const getPost = (req, res) => {
       if (result) {
         res.status(201).send(result);
       } else {
-        res.status(404).send("Task is not exist");
+        res.status(404).send("Post is not exist");
       }
     })
     .catch((err) => {
@@ -128,16 +128,18 @@ const deletePost = (req, res) => {
 const like = (req, res) => {
   const { postId } = req.params;
 
-   likeModel
+  likeModel
     .findOne({ post: postId, user: req.token.id })
     .then((ruselt) => {
       if (ruselt) {
         likeModel
           .findOneAndUpdate(
             { post: postId, user: req.token.id },
-            { isLiked: !ruselt.isLiked  }
-          ).then((updateResult) => {
+            { isLiked: !ruselt.isLiked }
+          )
+          .then((updateResult) => {
             res.status(201).send(updateResult);
+            // res.status(201).send("liked successfully✅");
           })
           .catch((err) => {
             res.status(400).send(err);
@@ -162,28 +164,6 @@ const like = (req, res) => {
     .catch((err) => {
       res.status(400).send(err);
     });
-  // .exec()
-  // .then((result) => {
-  //   if (result) {
-  //     // res.status(201).send("liked successfully✅");
-  //     res.status(201).send(result);
-  //   } else {
-  //     const likePost = new likeModel({
-  //       post: postId,
-  //       user: req.token.id,
-  //     });
-
-  //     likePost
-  //       .save()
-  //       .then(() => {
-  //         res.status(201).send(result);
-  //         // res.status(201).send("liked successfully✅");
-  //       })
-  //       .catch((err) => {
-  //         res.status(400).send(err);
-  //       });
-  //   }
-  // })
 };
 
 module.exports = {

@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 require("dotenv").config();
 
+// sign up
 const signup = async (req, res) => {
   const { email, username, password, avatar, role } = req.body;
 
@@ -31,6 +32,7 @@ const signup = async (req, res) => {
     });
 };
 
+// sign in
 const signin = (req, res) => {
   const { emailORusername, password } = req.body;
 
@@ -79,9 +81,11 @@ const signin = (req, res) => {
     });
 };
 
+// show all users for Admin
 const users = (req, res) => {
   userModel
     .find({ isDel: false })
+    .populate("role")
     .then((result) => {
       res.status(201).send(result);
     })
@@ -90,6 +94,7 @@ const users = (req, res) => {
     });
 };
 
+// delete users for Admin
 const deleteUser = (req, res) => {
   const { id } = req.params;
 
