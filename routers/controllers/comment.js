@@ -69,7 +69,7 @@ const getCom = (req, res) => {
     });
 };
 
-//Update comment
+// Update comment
 const editComment = (req, res) => {
   const { postId, comId } = req.params;
   const { comment } = req.body;

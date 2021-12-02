@@ -112,11 +112,21 @@ const deletePost = (req, res) => {
     .exec()
     .then((result) => {
       if (result) {
-        res.status(201).send("Deleted successfully✅");
-        // res.status(201).send(result);
+        comModel
+          .updateMany({ user: id }, { $set: { isDel: true } })
+          .catch((err) => {
+            res.status(400).send(err);
+          });
+        likeModel
+          .updateMany({ user: id }, { $set: { isLiked: false } })
+          .then(() => {
+            res.status(201).send("Deleted successfully✅");
+          })
+          .catch((err) => {
+            res.status(400).send(err);
+          });
       } else {
-        // if not the creator or allready deleted
-        res.status(404).send("Failed deleted⚠️");
+        res.status(404).send("Already deleted");
       }
     })
     .catch((err) => {
@@ -133,10 +143,21 @@ const adminDeletePost = (req, res) => {
     .exec()
     .then((result) => {
       if (result) {
-        res.status(201).send("Deleted successfully✅");
-        // res.status(201).send(result);
+        comModel
+          .updateMany({ user: id }, { $set: { isDel: true } })
+          .catch((err) => {
+            res.status(400).send(err);
+          });
+        likeModel
+          .updateMany({ user: id }, { $set: { isLiked: false } })
+          .then(() => {
+            res.status(201).send("Deleted successfully✅");
+          })
+          .catch((err) => {
+            res.status(400).send(err);
+          });
       } else {
-        res.status(404).send("Failed deleted⚠️");
+        res.status(404).send("Already deleted");
       }
     })
     .catch((err) => {
