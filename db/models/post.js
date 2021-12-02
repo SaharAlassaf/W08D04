@@ -5,7 +5,6 @@ const postSchema = new mongoose.Schema({
   desc: { type: String, required: true },
   postDate: { type: Date, default: Date.now },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  like: { type: mongoose.Schema.Types.ObjectId, ref: "Like" },
   isDel: { type: Boolean, required: true, default: false },
 });
 
