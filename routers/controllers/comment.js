@@ -1,5 +1,4 @@
 const postModel = require("./../../db/models/post");
-const userModel = require("./../../db/models/user");
 const comModel = require("./../../db/models/comment");
 
 // add comment to post
@@ -36,7 +35,7 @@ const addComment = (req, res) => {
     });
 };
 
-//Show all comments
+// show all comments
 const comments = (req, res) => {
   comModel
     .find({ isDel: false })
