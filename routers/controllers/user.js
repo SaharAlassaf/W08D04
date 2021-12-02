@@ -1,4 +1,7 @@
 const userModel = require("./../../db/models/user");
+const postModel = require("./../../db/models/post");
+const comModel = require("./../../db/models/comment");
+const likeModel = require("./../../db/models/like");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -34,11 +37,19 @@ const signin = (req, res) => {
   const savedEmailORusername = emailORusername.toLowerCase();
 
   userModel
-    .findOne({ $or: [{ email: savedEmailORusername }, { username: savedEmailORusername }] })
+    .findOne({
+      $or: [
+        { email: savedEmailORusername },
+        { username: savedEmailORusername },
+      ],
+    })
     .then(async (result) => {
       if (result) {
         console.log(result.username);
-        if (result.email == savedEmailORusername || result.username == savedEmailORusername) {
+        if (
+          result.email == savedEmailORusername ||
+          result.username == savedEmailORusername
+        ) {
           const checkedPassword = await bcrypt.compare(
             password,
             result.password
@@ -70,7 +81,7 @@ const signin = (req, res) => {
 
 const users = (req, res) => {
   userModel
-    .find({ isDel: { $eq: false } })
+    .find({ isDel: false })
     .then((result) => {
       res.status(201).send(result);
     })
@@ -83,12 +94,32 @@ const deleteUser = (req, res) => {
   const { id } = req.params;
 
   userModel
-    .findByIdAndDelete(id)
+    .findOneAndUpdate({ _id: id, isDel: false }, { isDel: true }, { new: true })
+    .exec()
     .then((result) => {
       if (result) {
-        res.status(201).send(result);
+        postModel
+          .updateMany({ user: id }, { $set: { isDel: true } })
+          .then(() => {})
+          .catch((err) => {
+            console.log(err);
+          });
+        comModel
+          .updateMany({ user: id }, { $set: { isDel: true } })
+          .then(() => {})
+          .catch((err) => {
+            console.log(err);
+          });
+        likeModel
+          .updateMany({ user: id }, { $set: { isLiked: true } })
+          .then(() => {
+            res.status(201).send("Deleted successfully✅");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       } else {
-        res.status(404).send("User already deleted");
+        res.status(404).send("Already deleted");
       }
     })
     .catch((err) => {

@@ -1,4 +1,5 @@
 const postModel = require("./../../db/models/post");
+const likeModel = require("./../../db/models/like");
 
 // Posted
 const createPost = (req, res) => {
@@ -77,7 +78,11 @@ const updatePost = (req, res) => {
   const { img, desc } = req.body;
 
   postModel
-    .findOneAndUpdate({ _id: id, user: req.token.id }, { img, desc }, { new: true })
+    .findOneAndUpdate(
+      { _id: id, user: req.token.id },
+      { img, desc },
+      { new: true }
+    )
     .exec()
     .then((result) => {
       console.log(result);
@@ -120,7 +125,62 @@ const deletePost = (req, res) => {
 };
 
 // like post
-const like = (req, res) => {};
+const like = (req, res) => {
+  const { postId } = req.params;
+
+  let ruselt = likeModel
+    .findOne({ post: postId, user: req.token.id })
+    .catch((err) => {
+      res.status(400).send(err);
+    });
+  if (ruselt) {
+    likeModel
+      .update(
+        { post: postId, user: req.token.id },
+        { $set: { isLiked: !result.isLiked } }
+      )
+      .catch((err) => {
+        res.status(400).send(err);
+      });
+  } else {
+    const likePost = new likeModel({
+      post: postId,
+      user: req.token.id,
+    });
+
+    likePost
+      .save()
+      .then(() => {
+        res.status(201).send(result);
+        // res.status(201).send("liked successfully✅");
+      })
+      .catch((err) => {
+        res.status(400).send(err);
+      });
+  }
+  // .exec()
+  // .then((result) => {
+  //   if (result) {
+  //     // res.status(201).send("liked successfully✅");
+  //     res.status(201).send(result);
+  //   } else {
+  //     const likePost = new likeModel({
+  //       post: postId,
+  //       user: req.token.id,
+  //     });
+
+  //     likePost
+  //       .save()
+  //       .then(() => {
+  //         res.status(201).send(result);
+  //         // res.status(201).send("liked successfully✅");
+  //       })
+  //       .catch((err) => {
+  //         res.status(400).send(err);
+  //       });
+  //   }
+  // })
+};
 
 module.exports = {
   createPost,

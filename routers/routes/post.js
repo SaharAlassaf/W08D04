@@ -13,6 +13,6 @@ postRouter.get("/getPost", authentication, exist, getPost);
 
 postRouter.put("/updatePost/:id", authentication, exist, updatePost);
 postRouter.delete("/deletePost/:id", authentication, exist, deletePost);
-postRouter.delete("/like/:id", authentication, exist, like);
+postRouter.post("/like/:postId", authentication, like);
 
 module.exports = postRouter;
