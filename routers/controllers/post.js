@@ -128,36 +128,38 @@ const deletePost = (req, res) => {
 const like = (req, res) => {
   const { postId } = req.params;
 
-  let ruselt = likeModel
+   likeModel
     .findOne({ post: postId, user: req.token.id })
+    .then((ruselt) => {
+      if (ruselt) {
+        likeModel
+          .findOneAndUpdate(
+            { post: postId, user: req.token.id },
+            { $set: { isLiked: !result.isLiked } }
+          )
+          .catch((err) => {
+            res.status(400).send(err);
+          });
+      } else {
+        const likePost = new likeModel({
+          post: postId,
+          user: req.token.id,
+        });
+
+        likePost
+          .save()
+          .then(() => {
+            res.status(201).send(result);
+            // res.status(201).send("liked successfully✅");
+          })
+          .catch((err) => {
+            res.status(400).send(err);
+          });
+      }
+    })
     .catch((err) => {
       res.status(400).send(err);
     });
-  if (ruselt) {
-    likeModel
-      .update(
-        { post: postId, user: req.token.id },
-        { $set: { isLiked: !result.isLiked } }
-      )
-      .catch((err) => {
-        res.status(400).send(err);
-      });
-  } else {
-    const likePost = new likeModel({
-      post: postId,
-      user: req.token.id,
-    });
-
-    likePost
-      .save()
-      .then(() => {
-        res.status(201).send(result);
-        // res.status(201).send("liked successfully✅");
-      })
-      .catch((err) => {
-        res.status(400).send(err);
-      });
-  }
   // .exec()
   // .then((result) => {
   //   if (result) {
