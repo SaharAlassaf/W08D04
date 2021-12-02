@@ -100,18 +100,16 @@ const deleteUser = (req, res) => {
       if (result) {
         postModel
           .updateMany({ user: id }, { $set: { isDel: true } })
-          .then(() => {})
           .catch((err) => {
             res.status(400).send(err);
           });
         comModel
           .updateMany({ user: id }, { $set: { isDel: true } })
-          .then(() => {})
           .catch((err) => {
             res.status(400).send(err);
           });
         likeModel
-          .updateMany({ user: id }, { $set: { isLiked: true } })
+          .updateMany({ user: id }, { $set: { isLiked: false } })
           .then(() => {
             res.status(201).send("Deleted successfully✅");
           })
