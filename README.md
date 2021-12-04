@@ -10,7 +10,7 @@ To build and run this app locally you will need a few things:
 # Getting started
 - Clone the repository
 ```
-git clone  https://github.com/SaharAlassaf/W08D02.git <project_name>
+git clone <project_name>
 ```
 - Install dependencies
 ```
