@@ -52,10 +52,10 @@ Create a new key authToken and within the /signin request this value is automati
 
 This is a REST API, so it works using the following HTTP methods:
 
-GET (Read): Gets a list of items, or a single item
-POST (Create): Creates an item
-PATCH (Update): Updates an item
-DELETE: Deletes an item
+*   GET (Read): Gets a list of items, or a single item
+*   POST (Create): Creates an item
+*   PATCH (Update): Updates an item
+*   DELETE: Deletes an item
 
 https://documenter.getpostman.com/view/8242967/UVJhDEbj
 
