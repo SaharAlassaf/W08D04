@@ -1,5 +1,5 @@
 # Code Overview
-The main purpose of this repository is to show an authentaction and authorization with Node.js API Server 
+The main purpose of this repository is to show social media backend with Node.js API Server 
 
 # Pre-reqs
 To build and run this app locally you will need a few things:
