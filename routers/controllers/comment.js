@@ -38,12 +38,12 @@ const addComment = (req, res) => {
 // show all comments
 const comments = (req, res) => {
   comModel
-    .find({ isDel: false })
+    .find({ isDel: false }).populate("user")
     .then((result) => {
       if (result.length > 0) {
         res.status(201).send(result);
       } else {
-        res.status(404).send("No posts");
+        res.status(404).send("No comments");
       }
     })
     .catch((err) => {

@@ -24,7 +24,7 @@ const createPost = (req, res) => {
 //Show all posts
 const posts = (req, res) => {
   postModel
-    .find({ isDel: false })
+    .find({ isDel: false }).populate("user")
     .then((result) => {
       if (result.length > 0) {
         res.status(201).send(result);
@@ -44,7 +44,7 @@ const userPost = (req, res) => {
     .exec()
     .then((result) => {
       if (result.length > 0) {
-        res.status(201).send(result);
+        res.status(200).send(result);
       } else {
         res.status(404).send("Does't have any posts");
       }
