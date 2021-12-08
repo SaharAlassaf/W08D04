@@ -28,7 +28,7 @@ const signup = async (req, res) => {
       res.status(200).send(result);
     })
     .catch((err) => {
-      res.status(404).send(err);
+      res.status(400).send(err);
     });
 };
 
@@ -87,7 +87,7 @@ const users = (req, res) => {
     .find({ isDel: false })
     .populate("role")
     .then((result) => {
-      res.status(201).send(result);
+      res.status(200).send(result);
     })
     .catch((err) => {
       res.status(400).send(err);
@@ -116,13 +116,13 @@ const deleteUser = (req, res) => {
         likeModel
           .updateMany({ user: id }, { $set: { isLiked: false } })
           .then(() => {
-            res.status(201).send("Deleted successfully✅");
+            res.status(200).send("Deleted successfully✅");
           })
           .catch((err) => {
             res.status(400).send(err);
           });
       } else {
-        res.status(404).send("Already deleted");
+        res.status(400).send("Already deleted");
       }
     })
     .catch((err) => {
