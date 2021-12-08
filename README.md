@@ -76,7 +76,7 @@ If the user making the request does not have the required permissions to access 
 
 # ER diagram
 
-<img width="963" alt="Screen Shot 1443-05-04 at 1 59 17 PM" src="https://user-images.githubusercontent.com/92248067/145265327-931f10b8-1fff-4023-8f42-e9427287ad2e.png">
+<img width="947" alt="Screen Shot 1443-05-04 at 9 43 33 PM" src="https://user-images.githubusercontent.com/92248067/145265715-1e5ce4dd-e940-485f-93ea-7d8c56ad7c1e.png">
 
 # UML diagram
 
