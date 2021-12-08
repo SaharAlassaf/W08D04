@@ -74,11 +74,11 @@ The `exist` middleware can also be used to require check user is not deleted.
 
 If the user making the request does not have the required permissions to access a route, a Forbidden (403) error is thrown.
 
-## ER diagram
+# ER diagram
 
 <img width="963" alt="Screen Shot 1443-05-04 at 1 59 17 PM" src="https://user-images.githubusercontent.com/92248067/145265327-931f10b8-1fff-4023-8f42-e9427287ad2e.png">
 
-## UML diagram
+# UML diagram
 
 ![Influence Diagram Template (1)](https://user-images.githubusercontent.com/92248067/145265482-a5c50cb9-03f5-4bfb-9623-7ff97a12a75b.jpg)
 
