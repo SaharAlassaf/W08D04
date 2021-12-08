@@ -27,7 +27,7 @@ const posts = (req, res) => {
     .find({ isDel: false }).populate("user")
     .then((result) => {
       if (result.length > 0) {
-        res.status(201).send(result);
+        res.status(200).send(result);
       } else {
         res.status(404).send("No posts");
       }
@@ -62,7 +62,7 @@ const getPost = (req, res) => {
     .exec()
     .then((result) => {
       if (result) {
-        res.status(201).send(result);
+        res.status(200).send(result);
       } else {
         res.status(404).send("Post is not exist");
       }
@@ -87,7 +87,7 @@ const updatePost = (req, res) => {
     .then((result) => {
       console.log(result);
       if (result) {
-        res.status(201).send("Updated successfully✅");
+        res.status(200).send("Updated successfully✅");
         // res.status(201).send(result);
       } else {
         // if not the creator
@@ -120,7 +120,7 @@ const deletePost = (req, res) => {
         likeModel
           .updateMany({ user: id }, { $set: { isLiked: false } })
           .then(() => {
-            res.status(201).send("Deleted successfully✅");
+            res.status(200).send("Deleted successfully✅");
           })
           .catch((err) => {
             res.status(400).send(err);
@@ -151,7 +151,7 @@ const adminDeletePost = (req, res) => {
         likeModel
           .updateMany({ user: id }, { $set: { isLiked: false } })
           .then(() => {
-            res.status(201).send("Deleted successfully✅");
+            res.status(200).send("Deleted successfully✅");
           })
           .catch((err) => {
             res.status(400).send(err);
@@ -179,7 +179,7 @@ const like = (req, res) => {
             { isLiked: !ruselt.isLiked }
           )
           .then((updateResult) => {
-            res.status(201).send(updateResult);
+            res.status(200).send(updateResult);
             // res.status(201).send("liked successfully✅");
           })
           .catch((err) => {
@@ -194,7 +194,7 @@ const like = (req, res) => {
         likePost
           .save()
           .then((newResult) => {
-            res.status(201).send(newResult);
+            res.status(200).send(newResult);
             // res.status(201).send("liked successfully✅");
           })
           .catch((err) => {
