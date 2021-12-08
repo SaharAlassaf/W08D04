@@ -6,8 +6,6 @@ const addComment = (req, res) => {
   const { postId } = req.params;
   const { comment } = req.body;
 
-  console.log(postId, comment);
-
   postModel
     .findOne({ postId, isDel: false })
     .then((result) => {
@@ -41,7 +39,7 @@ const comments = (req, res) => {
     .find({ isDel: false }).populate("user")
     .then((result) => {
       if (result.length > 0) {
-        res.status(201).send(result);
+        res.status(200).send(result);
       } else {
         res.status(404).send("No comments");
       }
@@ -59,7 +57,7 @@ const getCom = (req, res) => {
     .exec()
     .then((result) => {
       if (result) {
-        res.status(201).send(result);
+        res.status(200).send(result);
       } else {
         res.status(404).send("Comment is not exist");
       }
@@ -84,7 +82,7 @@ const editComment = (req, res) => {
     .then((result) => {
       console.log(result);
       if (result) {
-        res.status(201).send("Updated successfully✅");
+        res.status(200).send("Updated successfully✅");
         // res.status(201).send(result);
       } else {
         // if not the creator
@@ -109,7 +107,7 @@ const deleteComment = (req, res) => {
     .exec()
     .then((result) => {
       if (result) {
-        res.status(201).send("Deleted successfully✅");
+        res.status(200).send("Deleted successfully✅");
         // res.status(201).send(result);
       } else {
         // if not the creator or allready deleted
@@ -134,7 +132,7 @@ const adminDeleteComment = (req, res) => {
     .exec()
     .then((result) => {
       if (result) {
-        res.status(201).send("Deleted successfully✅");
+        res.status(200).send("Deleted successfully✅");
         // res.status(201).send(result);
       } else {
         // if not the creator or allready deleted
