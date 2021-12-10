@@ -1,8 +1,34 @@
 const userModel = require("./../../db/models/user");
 
 const checkDuplicate = (req, res, next) => {
-  const { email, username } = req.body;
+  const { email, username, password } = req.body;
 
+  const regexPassword = /^(?=(.*\d){2})(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z\d]).{8,}$/;
+  const regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+  /*
+  At least 8 characters long
+    2 letters
+    2 digits
+    1 Upper case
+    1 Lower case
+    1 Symbol
+
+  ^(?=(.*\d){2})(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z\d]).{8,}$
+    ---------  --------------------- --------------- -----
+        |               |                    |          |->match 8 or more characters
+        |               |                    |->match further only if theres anything except letter or digit
+        |               |->match further only if there is an upper-lower case letter
+        |
+        |->match further only if there are two digits anywhere
+  */
+  if (regexPassword.test(password) === false) {
+    res.status(400).send({ message: "Failed password!" });
+    return;
+  } else if (regexEmail.test(email) === false){
+    res.status(400).send({ message: "Failed Email!" });
+    return;
+  }
   // Username
   const savedUsername = username.toLowerCase();
 
