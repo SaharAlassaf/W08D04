@@ -44,6 +44,7 @@ const signup = async (req, res) => {
   });
 };
 
+// activate account
 const activateAccount = (req, res) => {
   const { token } = req.body;
   if (token) {
@@ -81,6 +82,85 @@ const activateAccount = (req, res) => {
     });
   } else {
     res.status(400).send("Somthing went wrong!");
+  }
+};
+
+// forgot password
+const forgotPassword = (req, res) => {
+  const { email } = req.body;
+
+  const savedEmail = email.toLowerCase();
+
+  userModel
+    .findOne({ email: savedEmail })
+    .then(async (result) => {
+      const payload = {
+        _id: result._id,
+        email: savedEmail,
+      };
+      const options = { expiresIn: "1h" };
+      const token = await jwt.sign(payload, secret, options);
+
+      const data = {
+        from: "norelay@myFirstEmail.com",
+        to: savedEmail,
+        subject: "Reset Passwoed",
+        html: `<h2>Reset Passwoed</h2>
+        <a href="${process.env.URL}/reset/${token}">Reset your password</a>
+        `,
+      };
+      userModel
+        .findOneAndUpdate({ email: savedEmail }, { resetLink: token })
+        .then(() => {
+          mg.messages().send(data, (error) => {
+            if (error) {
+              res.status(400).send(error);
+            } else {
+              res.status(200).send("Email have been sent");
+            }
+          });
+        })
+        .catch((err) => {
+          res.status(400).send(err);
+        });
+    })
+    .catch((err) => {
+      res.status(400).send(err);
+    });
+};
+
+// reset password
+const resetPassword = async(req, res) => {
+  const { resetLink, newPass } = req.body;
+
+  const hashedPassword = await bcrypt.hash(newPass, Number(process.env.SALT));
+
+  if (resetLink) {
+    jwt.verify(resetLink, secret, (err) => {
+      if (err) {
+        res.status(401).send("Incorrect or expired link");
+      } else {
+        userModel
+          .findOne({ resetLink })
+          .then((result) => {
+            if (result) {
+              userModel
+                .findOneAndUpdate({ resetLink }, { password: hashedPassword, resetLink: "" })
+                .then(() => {
+                  res.status(200).send("Reset successfully✅");
+                })
+                .catch((err) => {
+                  res.status(400).send(err);
+                });
+            }
+          })
+          .catch((err) => {
+            res.status(400).send(err);
+          });
+      }
+    });
+  } else {
+    res.status(401).send("Authentication error");
   }
 };
 
@@ -180,4 +260,12 @@ const deleteUser = (req, res) => {
     });
 };
 
-module.exports = { signup, activateAccount, signin, users, deleteUser };
+module.exports = {
+  signup,
+  activateAccount,
+  forgotPassword,
+  resetPassword,
+  signin,
+  users,
+  deleteUser,
+};

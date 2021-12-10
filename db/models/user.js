@@ -7,8 +7,15 @@ const userSchema = new mongoose.Schema({
     unique: true,
     required: true,
     trim: true,
+    lowercase: true,
   },
-  username: { type: String, required: true, unique: true, trim: true, maxlength: 20},
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    maxlength: 20,
+  },
   password: { type: String, required: true, minlength: 8, trim: true },
   avatar: {
     type: String,
@@ -17,6 +24,7 @@ const userSchema = new mongoose.Schema({
   },
   role: { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
   isDel: { type: Boolean, required: true, default: false },
+  resetLink: { type: String, default: "" },
 });
 
 module.exports = mongoose.model("User", userSchema);
