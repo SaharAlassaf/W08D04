@@ -47,7 +47,6 @@ const signin = (req, res) => {
     })
     .then(async (result) => {
       if (result) {
-        console.log(result.username);
         if (
           result.email == savedEmailORusername ||
           result.username == savedEmailORusername
