@@ -3,9 +3,14 @@ const postModel = require("./../../db/models/post");
 const comModel = require("./../../db/models/comment");
 const likeModel = require("./../../db/models/like");
 const bcrypt = require("bcrypt");
-var jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
+const { OAuth2Client } = require("google-auth-library");
 require("dotenv").config();
 const secret = process.env.secretKey;
+
+const clinte = new OAuth2Client(
+  "303299576143-aiehfsg7l0jrm7313aav0smgh11g150h.apps.googleusercontent.com"
+);
 
 const mailgun = require("mailgun-js");
 const DOMAIN = "sandbox093b95b4aa3d4d5abdba1595e7d10442.mailgun.org";
@@ -130,7 +135,7 @@ const forgotPassword = (req, res) => {
 };
 
 // reset password
-const resetPassword = async(req, res) => {
+const resetPassword = async (req, res) => {
   const { resetLink, newPass } = req.body;
 
   const hashedPassword = await bcrypt.hash(newPass, Number(process.env.SALT));
@@ -145,7 +150,10 @@ const resetPassword = async(req, res) => {
           .then((result) => {
             if (result) {
               userModel
-                .findOneAndUpdate({ resetLink }, { password: hashedPassword, resetLink: "" })
+                .findOneAndUpdate(
+                  { resetLink },
+                  { password: hashedPassword, resetLink: "" }
+                )
                 .then(() => {
                   res.status(200).send("Reset successfully✅");
                 })
@@ -211,6 +219,63 @@ const signin = (req, res) => {
     });
 };
 
+// sign in with google
+const googleSignin = (req, res) => {
+  const { token } = req.body;
+
+  clinte
+    .verifyIdToken({
+      idToken: token,
+      audience:
+        "303299576143-aiehfsg7l0jrm7313aav0smgh11g150h.apps.googleusercontent.com",
+    })
+    .then((response) => {
+      const { email_verified, email, name, given_name } = response.payload;
+      if (email_verified) {
+        userModel.findOne({ email }).exec(async (err, user) => {
+          if (err) {
+            res.status(400).send("Somthing went wrong!");
+          } else {
+            if (user) {
+              const payload = {
+                id: user._id,
+                role: user.role,
+                isDel: user.isDel,
+              };
+              const options = { expiresIn: "1h" };
+              const token = await jwt.sign(payload, secret, options);
+              res.status(200).send({ user, token });
+            } else {
+              let password = email + process.env.secretKey;
+              const hashedPassword = await bcrypt.hash(password, Number(process.env.SALT));
+              const newUser = new userModel({
+                email,
+                username: given_name,
+                password: hashedPassword,
+              });
+              newUser
+                .save()
+                .then(async (result) => {
+                  const payload = {
+                    id: result._id,
+                    role: result.role,
+                    isDel: result.isDel,
+                  };
+                  const options = { expiresIn: "1h" };
+                  const token = await jwt.sign(payload, secret, options);
+                  res.status(200).send({ result, token });
+                })
+                .catch((err) => {
+                  // console.log(err);
+                  res.status(400).send(err);
+                });
+            }
+          }
+        });
+      }
+    });
+};
+
 // show all users for Admin
 const users = (req, res) => {
   userModel
@@ -266,6 +331,7 @@ module.exports = {
   forgotPassword,
   resetPassword,
   signin,
+  googleSignin,
   users,
   deleteUser,
 };

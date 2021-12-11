@@ -5,6 +5,7 @@ const {
   forgotPassword,
   resetPassword,
   signin,
+  googleSignin,
   users,
   deleteUser,
 } = require("../controllers/user");
@@ -20,6 +21,7 @@ userRouter.post("/activateAccount", activateAccount);
 userRouter.put("/forgotPassword", forgotPassword);
 userRouter.put("/resetPassword", resetPassword);
 userRouter.post("/signin", signin);
+userRouter.post("/googleSignin", googleSignin);
 userRouter.delete("/deleteUser/:id", authentication, authorization, deleteUser); //just Admin
 
 module.exports = userRouter;

@@ -24,11 +24,11 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "google-auth-library": "^7.10.3",
     "jsonwebtoken": "^8.5.1",
     "mailgun-js": "^0.22.0",
     "mongoose": "^6.0.14",
     "morgan": "^1.10.0",
-    "nodemon": "^2.0.15",
-    "validator": "^13.7.0"
+    "nodemon": "^2.0.15"
   }
 }
