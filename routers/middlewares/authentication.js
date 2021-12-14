@@ -5,7 +5,7 @@ const secret = process.env.secretKey;
 const authentication = (req, res, next) => {
   try {
     if (!req.headers.authorization)
-      return res.status(403).send({ message: "forbidden" });
+      return res.status(403).send({ message: "auth forbidden" });
 
     const token = req.headers.authorization.split(" ")[1];
 

@@ -8,9 +8,7 @@ const { OAuth2Client } = require("google-auth-library");
 require("dotenv").config();
 const secret = process.env.secretKey;
 
-const clinte = new OAuth2Client(
-  "303299576143-aiehfsg7l0jrm7313aav0smgh11g150h.apps.googleusercontent.com"
-);
+const clinte = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const mailgun = require("mailgun-js");
 const DOMAIN = "sandbox093b95b4aa3d4d5abdba1595e7d10442.mailgun.org";
@@ -37,14 +35,15 @@ const signup = async (req, res) => {
     to: savedEmail,
     subject: `Hi ${savedUsername}, please verify your account‏‏`,
     html: `<h2>Account Verification</h2>
-    <a href="${process.env.URL}/auth/${token}">Verify your email address</a>
+    <a href="${process.env.URL}/activateAccount">Verify your email address</a>
     `,
   };
   mg.messages().send(data, (error) => {
     if (error) {
+      console.log(error);
       res.status(400).send(error);
     } else {
-      res.status(200).send("Email have been sent");
+      res.status(200).send({ token });
     }
   });
 };
@@ -52,6 +51,7 @@ const signup = async (req, res) => {
 // activate account
 const activateAccount = (req, res) => {
   const { token } = req.body;
+  console.log(token);
   if (token) {
     jwt.verify(token, secret, (err, decodedToken) => {
       if (err) {
@@ -110,8 +110,8 @@ const forgotPassword = (req, res) => {
         from: "norelay@myFirstEmail.com",
         to: savedEmail,
         subject: "Reset Passwoed",
-        html: `<h2>Reset Passwoed</h2>
-        <a href="${process.env.URL}/reset/${token}">Reset your password</a>
+        html: `<h2>Reset Password</h2>
+        <a href="${process.env.URL}/resetPassword">Reset your password</a>
         `,
       };
       userModel
@@ -121,7 +121,7 @@ const forgotPassword = (req, res) => {
             if (error) {
               res.status(400).send(error);
             } else {
-              res.status(200).send("Email have been sent");
+              res.status(200).send({ token });
             }
           });
         })
@@ -184,7 +184,7 @@ const signin = (req, res) => {
         { email: savedEmailORusername },
         { username: savedEmailORusername },
       ],
-    })
+    }).populate("role")
     .then(async (result) => {
       if (result) {
         if (
@@ -197,7 +197,7 @@ const signin = (req, res) => {
           );
           if (checkedPassword) {
             const payload = {
-              id: result._id,
+              userId: result._id,
               role: result.role,
               isDel: result.isDel,
             };
@@ -205,7 +205,7 @@ const signin = (req, res) => {
             const token = await jwt.sign(payload, secret, options);
             res.status(200).send({ result, token });
           } else {
-            res.status(404).send("Invalid email or password");
+            return res.status(404).send("Invalid email or password");
           }
         } else {
           res.status(404).send("Invalid email or password");
@@ -232,7 +232,7 @@ const googleSignin = (req, res) => {
     .then((response) => {
       const { email_verified, email, name, given_name } = response.payload;
       if (email_verified) {
-        userModel.findOne({ email }).exec(async (err, user) => {
+        userModel.findOne({ email: email }).exec(async (err, user) => {
           if (err) {
             res.status(400).send("Somthing went wrong!");
           } else {
@@ -247,7 +247,10 @@ const googleSignin = (req, res) => {
               res.status(200).send({ user, token });
             } else {
               let password = email + process.env.secretKey;
-              const hashedPassword = await bcrypt.hash(password, Number(process.env.SALT));
+              const hashedPassword = await bcrypt.hash(
+                password,
+                Number(process.env.SALT)
+              );
               const newUser = new userModel({
                 email,
                 username: given_name,

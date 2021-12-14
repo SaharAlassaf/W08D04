@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
     default:
       "https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg",
   },
-  role: { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
+  role: { type: mongoose.Schema.Types.ObjectId, ref: "Role", default: "61ab538c37cb9240335f5d0a"},
   isDel: { type: Boolean, required: true, default: false },
   resetLink: { type: String, default: "" },
 });

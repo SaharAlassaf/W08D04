@@ -12,6 +12,8 @@ const {
 const authentication = require("./../middlewares/authentication");
 const authorization = require("./../middlewares/authorization");
 const checkDuplicate = require("./../middlewares/checkDuplicate");
+const passport = require("passport");
+require("../auth");
 
 const userRouter = express.Router();
 
@@ -23,5 +25,25 @@ userRouter.put("/resetPassword", resetPassword);
 userRouter.post("/signin", signin);
 userRouter.post("/googleSignin", googleSignin);
 userRouter.delete("/deleteUser/:id", authentication, authorization, deleteUser); //just Admin
+
+// userRouter.use(passport.initialize());
+// userRouter.use(passport.session());
+
+// userRouter.get(
+//   "/auth/google",
+//   passport.authenticate("google", {
+//     scope: ["profile", "email"],
+//   })
+// );
+
+// userRouter.get(
+//   "/auth/google/callback",
+//   passport.authenticate("google", {
+//     failureRedirect: "/",
+//     successRedirect: "/profile",
+//     failureFlash: true,
+//     successFlash: "Successfully logged in!",
+//   })
+// );
 
 module.exports = userRouter;

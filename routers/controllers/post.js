@@ -1,5 +1,6 @@
 const postModel = require("./../../db/models/post");
 const likeModel = require("./../../db/models/like");
+const comModel = require("./../../db/models/comment");
 
 // Posted
 const createPost = (req, res) => {
@@ -24,7 +25,8 @@ const createPost = (req, res) => {
 //Show all posts
 const posts = (req, res) => {
   postModel
-    .find({ isDel: false }).populate("user")
+    .find({ isDel: false })
+    .populate("user")
     .then((result) => {
       if (result.length > 0) {
         res.status(200).send(result);
@@ -55,21 +57,34 @@ const userPost = (req, res) => {
 };
 
 // show post by id
-const getPost = (req, res) => {
+const getPost = async (req, res) => {
   const { id } = req.params;
-  taskModel
-    .findById(id)
-    .exec()
-    .then((result) => {
-      if (result) {
-        res.status(200).send(result);
-      } else {
-        res.status(404).send("Post is not exist");
-      }
+  const post = await postModel
+    .findOne({
+      _id: id,
+      isDel: false,
     })
-    .catch((err) => {
-      res.status(400).send(err);
-    });
+    .populate("user");
+
+  const comments = await comModel
+    .find({
+      post: id,
+      isDel: false,
+    })
+    .populate("user");
+
+  const likes = await likeModel
+    .find({
+      post: id,
+      isLiked: true,
+    })
+    .populate("user");
+    
+  if (post) {
+    res.status(200).send({ post, comments, likes });
+  } else {
+    res.status(404).send("Post is not exist");
+  }
 };
 
 // Update post
@@ -167,15 +182,16 @@ const adminDeletePost = (req, res) => {
 
 // like post
 const like = (req, res) => {
-  const { postId } = req.params;
+  const { id } = req.params;
+  const { userId } = req.body
 
   likeModel
-    .findOne({ post: postId, user: req.token.id })
+    .findOne({ post: id, user: userId })
     .then((ruselt) => {
       if (ruselt) {
         likeModel
           .findOneAndUpdate(
-            { post: postId, user: req.token.id },
+            { post: id, user: userId },
             { isLiked: !ruselt.isLiked }
           )
           .then((updateResult) => {
@@ -187,8 +203,8 @@ const like = (req, res) => {
           });
       } else {
         const likePost = new likeModel({
-          post: postId,
-          user: req.token.id,
+          post: id,
+          user: userId,
         });
 
         likePost

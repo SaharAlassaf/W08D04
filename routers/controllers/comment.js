@@ -4,15 +4,15 @@ const comModel = require("./../../db/models/comment");
 // add comment to post
 const addComment = (req, res) => {
   const { postId } = req.params;
-  const { comment } = req.body;
+  const { comment, userId } = req.body;
 
   postModel
-    .findOne({ postId, isDel: false })
+    .findOne({ _id: postId, isDel: false })
     .then((result) => {
       if (result) {
         const newCom = new comModel({
           comment,
-          user: req.token.id,
+          user: userId,
           post: postId,
         });
         newCom
@@ -36,7 +36,8 @@ const addComment = (req, res) => {
 // show all comments
 const comments = (req, res) => {
   comModel
-    .find({ isDel: false }).populate("user")
+    .find({ isDel: false })
+    .populate("user")
     .then((result) => {
       if (result.length > 0) {
         res.status(200).send(result);
@@ -54,7 +55,7 @@ const getCom = (req, res) => {
   const { id } = req.params;
   comModel
     .findById(id)
-    .exec()
+    .populate("user")
     .then((result) => {
       if (result) {
         res.status(200).send(result);
@@ -150,5 +151,5 @@ module.exports = {
   getCom,
   editComment,
   deleteComment,
-  adminDeleteComment
+  adminDeleteComment,
 };

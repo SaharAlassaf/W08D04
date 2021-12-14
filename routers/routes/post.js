@@ -16,14 +16,18 @@ const exist = require("./../middlewares/exist");
 const postRouter = express.Router();
 
 postRouter.post("/createPost", authentication, exist, createPost);
-postRouter.get("/", authentication, exist, posts);
+postRouter.get("/", posts);
 postRouter.get("/userPost", authentication, exist, userPost);
 
-
-postRouter.get("/getPost/:id", authentication, exist, getPost);
+postRouter.get("/getPost/:id", getPost);
 postRouter.put("/updatePost/:id", authentication, exist, updatePost);
 postRouter.delete("/deletePost/:id", authentication, exist, deletePost);
-postRouter.delete("/adminDeletePost/:id", authentication, authorization, adminDeletePost);
-postRouter.post("/like/:postId", authentication, like);
+postRouter.delete(
+  "/adminDeletePost/:id",
+  authentication,
+  authorization,
+  adminDeletePost
+);
+postRouter.post("/like/:id", like);
 
 module.exports = postRouter;

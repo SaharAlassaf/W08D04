@@ -45,7 +45,7 @@ const checkDuplicate = (req, res, next) => {
       if (user) {
         res
           .status(400)
-          .send({ message: "Failed! Username is already in use!" });
+          .json({ message: "Failed! Username is already in use!" });
         return;
       }
 
