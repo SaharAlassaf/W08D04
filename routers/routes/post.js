@@ -17,7 +17,7 @@ const postRouter = express.Router();
 
 postRouter.post("/createPost", authentication, exist, createPost);
 postRouter.get("/", posts);
-postRouter.get("/userPost", authentication, exist, userPost);
+postRouter.get("/userPost/:id", userPost);
 
 postRouter.get("/getPost/:id", getPost);
 postRouter.put("/updatePost/:id", authentication, exist, updatePost);

@@ -4,15 +4,15 @@ const comModel = require("./../../db/models/comment");
 // add comment to post
 const addComment = (req, res) => {
   const { postId } = req.params;
-  const { comment, userId } = req.body;
+  const { comment } = req.body;
 
   postModel
-    .findOne({ _id: postId, isDel: false })
+    .find({ _id: postId, isDel: false })
     .then((result) => {
       if (result) {
         const newCom = new comModel({
           comment,
-          user: userId,
+          user: req.token.id,
           post: postId,
         });
         newCom

@@ -14,8 +14,8 @@ const createPost = (req, res) => {
 
   newPost
     .save()
-    .then(() => {
-      res.status(201).send("Posted successfully✅");
+    .then((result) => {
+      res.status(201).send(result);
     })
     .catch((err) => {
       res.status(400).send(err);
@@ -41,8 +41,9 @@ const posts = (req, res) => {
 
 // show user posts
 const userPost = (req, res) => {
+  const { id } = req.params;
   postModel
-    .find({})
+    .find({ user: id })
     .exec()
     .then((result) => {
       if (result.length > 0) {
@@ -79,7 +80,7 @@ const getPost = async (req, res) => {
       isLiked: true,
     })
     .populate("user");
-    
+
   if (post) {
     res.status(200).send({ post, comments, likes });
   } else {
@@ -183,7 +184,7 @@ const adminDeletePost = (req, res) => {
 // like post
 const like = (req, res) => {
   const { id } = req.params;
-  const { userId } = req.body
+  const { userId } = req.body;
 
   likeModel
     .findOne({ post: id, user: userId })

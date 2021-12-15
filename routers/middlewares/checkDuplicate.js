@@ -23,10 +23,10 @@ const checkDuplicate = (req, res, next) => {
         |->match further only if there are two digits anywhere
   */
   if (regexPassword.test(password) === false) {
-    res.status(400).send({ message: "Failed password!" });
+    res.status(400).send({ message: "Invalid password, make it more complex" });
     return;
   } else if (regexEmail.test(email) === false){
-    res.status(400).send({ message: "Failed Email!" });
+    res.status(400).send({ message: "Invalid Email" });
     return;
   }
   // Username
